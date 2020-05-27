@@ -156,8 +156,8 @@ minetest.register_node(modname .. ":lantern_lit_" .. fuel, {
 		sounds = nodecore.sounds("nc_lode_annealed")
 	})
 	
-lnodes[light] = nodecore.dynamic_light_node(light)
-lnodes[light-2] = nodecore.dynamic_light_node(light-2)
+--lnodes[light] = nodecore.dynamic_light_node(light)
+--lnodes[light-2] = nodecore.dynamic_light_node(light-2)
 
 ----------------------------------------
 ------------Fuel Consumption------------
@@ -181,7 +181,7 @@ nodecore.register_abm({
 		chance = 1,
 		nodenames = {modname .. ":lantern_lit_" .. fuel},
 		action = function(pos)
-			minetest.sound_play("nc_fire_flamy", {gain = 0.4, pos = pos})
+			nodecore.sound_play(modname .. "_gassy", {gain = 0.4, pos = pos})
 			return minetest.set_node(pos, {name = modname .. ":lantern_" .. aburns})
 		end
 	})
@@ -205,7 +205,7 @@ nodecore.register_aism({
 
 						if ext and nodecore.quenched(pos, data.node and 1 or 0.3) then
 							nodecore.sound_play("nc_fire_snuff", {gain = 1, pos = pos})
-							stack:set_name(modname .. "lantern_"..fuel)
+							stack:set_name(modname .. ":lantern_"..fuel)
 							return stack
 						end
 				end
@@ -217,7 +217,7 @@ nodecore.register_aism({
 				chance = 1,
 				itemnames = {modname .. ":lantern_lit_" .. fuel},
 				action = function(stack, data)
-						minetest.sound_play("nc_fire_flamy", {gain = 0.4, pos = data.pos})
+						minetest.sound_play(modname .. "_gassy", {gain = 0.4, pos = data.pos})
 						stack:set_name(modname .. ":lantern_" .. aburns)
 						return stack
 				end
@@ -313,7 +313,7 @@ minetest.register_globalstep(function()
 				local bright = lnodes[wdef.light_source]
 				-- Wield light
 				local name = player:get_player_name()
-				nodecore.dynamic_light_add(hpos, bright, 0.5)
+--				nodecore.dynamic_light_add(hpos, bright, 0.5)
 
 				-- Wield ambiance
 				local t = ambtimers[name] or 0
@@ -329,7 +329,7 @@ minetest.register_globalstep(function()
 					if islit(stack) then
 						local def = minetest.registered_items[stack:get_name()]
 						local dim = lnodes[def.light_source - 2]
-						nodecore.dynamic_light_add(hpos, dim, 0.5)
+--						nodecore.dynamic_light_add(hpos, dim, 0.5)
 					end
 				end
 			end
@@ -342,7 +342,7 @@ local function entlight(self, ...)
 	local def = minetest.registered_items[stack:get_name()]
 	if not islit(stack) then return ... end
 	local bright = lnodes[def.light_source]
-	nodecore.dynamic_light_add(self.object:get_pos(), bright, 0.5)
+--	nodecore.dynamic_light_add(self.object:get_pos(), bright, 0.5)
 	return ...
 end
 for _, name in pairs({"item", "falling_node"}) do
@@ -360,3 +360,24 @@ end
 for n=1,nodecore.max_lantern_fuel do
 	lantern(n)
 end
+
+-----Lantern Recycling-----
+nodecore.register_craft({
+		label = "break lantern apart",
+		action = "pummel",
+		toolgroups = {choppy = 5},
+		nodes = {
+			{
+				match = {groups = {lantern = true}},
+				replace = "nc_optics:glass_crude"
+			}
+		},
+		items = {
+			{name = "nc_lode:rod_annealed", count = 4, scatter = 4},
+			{name = "nc_lode:prill_annealed", count = 1, scatter = 2},
+			{name = "nc_fire:lump_coal", count = 1, scatter = 4}, --temporary values. eventually will be determined by fuel level. 
+			{name = "nc_fire:lump_ash", count = 1, scatter = 2}
+		},
+		itemscatter = 2
+	})
+

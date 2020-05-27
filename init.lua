@@ -6,6 +6,8 @@ local include, nodecore
 
 --include("candle")
 include("lantern")
+include("luxlamp")
+
 
 
 ----------Let There Be Light----------
