@@ -57,9 +57,9 @@ minetest.register_node(modname .. ":lantern_empty", {
 nodecore.register_craft({
 		label = "assemble lantern",
 		nodes = {
-			{match = {groups = {chisel = true}}, replace = "air"},
+			{match = "nc_lode:bar_annealed", replace = "air"},
 			{y = -1, match = "nc_optics:glass", replace = "air"},
-			{y = -2, match = {groups = {metal_block = true}}, replace = modname .. ":lantern_empty"},
+			{y = -2, match = "nc_lode:block_annealed", replace = modname .. ":lantern_empty"},
 		}
 	})
 
