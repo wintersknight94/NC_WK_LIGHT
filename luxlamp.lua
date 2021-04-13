@@ -9,6 +9,7 @@ local delum	= power-1
 local flux	= power+1
 local charge	= power*100
 local vlux	= power*60
+local time	= 1000/power
 
 local particle = "nc_lux_base.png^[mask:nc_lux_dot_mask.png^[opacity:32"
 
@@ -79,7 +80,7 @@ nodecore.register_abm({
 		nodenames = {modname .. ":luxlamp_" .. id},
 		action = function(pos)
 			if minetest.find_node_near(pos,
-				1, {"group:lux_fluid"}) then
+				1, {"nc_lux:flux_flowing"}) then
 				return false
 			end
 			if power > 0 then
@@ -104,25 +105,37 @@ nodecore.register_aism({
 ---------------------------------------
 -----------Luxlamp Charging------------
 nodecore.register_abm({
-		label = "Luxlamp Charging",
+		label = "Luxlamp Effulgence",
 		nodenames = {"group:luxlamp"},
 		neighbors = {"nc_lux:flux_source", "nc_lux:flux_flowing"},
-		interval = 60,	--temporary, as a mysterious bug causes serious issue with this value
+		interval = time,
 		chance = 1,
 		action = function(pos)
-			if power < 4 then
-				nodecore.set_node(pos, {name = modname .. ":luxlamp_" .. flux})
-			end
+				nodecore.set_node(pos, {name = modname .. ":luxlamp_5"})
 		end
 	})
+	
+--nodecore.register_abm({
+--		label = "Luxlamp Charging",
+--		nodenames = {"group:luxlamp"},
+--		neighbors = {"nc_lux:flux_source", "nc_lux:flux_flowing"},
+--		interval = 2,	--temporary, as a mysterious bug causes serious issue with this value
+--		chance = 1,
+--		action = function(pos)
+--			if power > 4 then
+--				nodecore.set_node(pos, {name = modname .. ":luxlamp_" .. flux})
+--				elseif 4 then return false
+--			end
+--		end
+--	})
 	
 ---------------------------------------
 
 ---------------------------------------
 end
 luxlamp("Dull",		"0",	0,	1)
-luxlamp("Dim",			"1",	1,	3)
-luxlamp("Lambent",		"2",	2,	6)
-luxlamp("Radiant",		"3",	3,	9)
-luxlamp("Brilliant",	"4",	4,	12)
-
+luxlamp("Dim",			"1",	1,	4)
+luxlamp("Lambent",		"2",	2,	8)
+luxlamp("Radiant",		"3",	3,	12)
+luxlamp("Brilliant",	"4",	4,	16)
+luxlamp("Fulgent",		"5", 5,	20)
